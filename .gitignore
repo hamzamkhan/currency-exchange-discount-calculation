@@ -1,0 +1,13 @@
+/target/
+.classpath
+.project
+.factorypath
+.settings/
+/.DS_Store
+.idea/
+lib
+.idea_modules/
+*.iml
+*.ipr
+*.iws
+out/
