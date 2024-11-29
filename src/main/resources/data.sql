@@ -1,4 +1,6 @@
 INSERT INTO tbl_store_user(name, email, password, role, create_timestamp, update_timestamp) VALUES ('Hamza Mustafa Khan', 'hamza@khan.com', '$2a$10$GnumULeYv/Z0Pqa7A9X1nOxKQtXMUH6UOzthxAW/pEhuixi9e751C', 'CUSTOMER', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+INSERT INTO tbl_store_user(name, email, password, role, create_timestamp, update_timestamp) VALUES ('Hamza Khan', 'hamza1@khan.com', '$2a$10$GnumULeYv/Z0Pqa7A9X1nOxKQtXMUH6UOzthxAW/pEhuixi9e751C', 'EMPLOYEE', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+INSERT INTO tbl_store_user(name, email, password, role, create_timestamp, update_timestamp) VALUES ('Hamza M Khan', 'hamza2@khan.com', '$2a$10$GnumULeYv/Z0Pqa7A9X1nOxKQtXMUH6UOzthxAW/pEhuixi9e751C', 'AFFILIATE', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
 
 
 INSERT INTO tbl_items (name, description, price, quantity, category) VALUES

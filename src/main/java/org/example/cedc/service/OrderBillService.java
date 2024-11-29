@@ -48,7 +48,7 @@ public class OrderBillService {
     private ExchangeRateFetcher exchangeRateFetcher;
 
     public OrderBillResponseDTO calculateOrder(OrderBillRequestDTO request){
-        return new OrderBillResponseDTO(calculateFinalTotal(request));
+        return new OrderBillResponseDTO(calculateFinalTotal(request).setScale(2, RoundingMode.CEILING));
     }
 
     private BigDecimal calculateFinalTotal(OrderBillRequestDTO request){
