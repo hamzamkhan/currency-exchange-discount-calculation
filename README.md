@@ -96,7 +96,7 @@ This project deals with discount calculation and currency conversion (if applica
         - `OrderCalcControllerTest.java`
         - `StoreUserControllerTest.java`
     - For test coverage, jacoco plugin has been installed
-    - To generate the coverage report, run command `mvn clean test`, then go to `target -> site` folder, open the `index.html` in your desired browser which will show the report
+    - To generate the coverage report, run command `mvn clean test`, then go to `target -> site -> jacoco` folder, open the `index.html` in your desired browser which will show the report
     - Implementation is done on the basis of single environment/profile.
-    - `SonarQube` report is in the folder named `sonarqube`
+    - `SonarQube` is integrated and its report is in the folder named `sonarqube`
     - UML diagram is in the root folder
