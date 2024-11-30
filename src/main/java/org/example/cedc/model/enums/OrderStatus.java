@@ -5,5 +5,5 @@ package org.example.cedc.model.enums;
  * @mailto : hamzamkhan@outlook.com
  */
 public enum OrderStatus {
-    PENDING, COMPLETED, CANCELLED;
+    PENDING, COMPLETED;
 }

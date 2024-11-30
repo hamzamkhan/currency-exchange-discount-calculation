@@ -11,12 +11,13 @@ CREATE TABLE IF NOT EXISTS tbl_items (
 
 CREATE TABLE IF NOT EXISTS tbl_order (
                                          id bigint not null auto_increment PRIMARY KEY,
-                                         status ENUM('PENDING', 'COMPLETED', 'CANCELLED') NOT NULL, -- ENUM in Java, stored as string in SQL
-    original_currency VARCHAR(3) NOT NULL, -- ISO currency code (e.g., "USD")
-    target_currency VARCHAR(3) NOT NULL, -- ISO currency code (e.g., "EUR")
-    org_curr_amount DECIMAL(7, 2) NOT NULL, -- BigDecimal equivalent
-    discount DECIMAL(7, 2) NOT NULL, -- Discount in percentage (e.g., 10.00%)
-    target_payable_amount DECIMAL(7, 2) NOT NULL,
+                                         status ENUM('PENDING', 'COMPLETED') NOT NULL,
+    original_currency VARCHAR(3) NOT NULL,
+    target_currency VARCHAR(3) NOT NULL,
+    org_curr_amount DECIMAL(7, 2) NULL,
+    discount DECIMAL(7, 2) NULL,
+    target_payable_amount DECIMAL(7, 2) NULL,
+    user_id BIGINT NOT NULL,
     create_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     update_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );

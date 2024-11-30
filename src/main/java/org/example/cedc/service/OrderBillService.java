@@ -9,8 +9,11 @@ import org.example.cedc.model.dto.OrderItemDTO;
 import org.example.cedc.model.dto.request.OrderBillRequestDTO;
 import org.example.cedc.model.dto.response.OrderBillResponseDTO;
 import org.example.cedc.model.entity.Item;
+import org.example.cedc.model.entity.Order;
+import org.example.cedc.model.entity.OrderItem;
 import org.example.cedc.model.entity.StoreUser;
 import org.example.cedc.model.enums.ItemCategory;
+import org.example.cedc.model.enums.OrderStatus;
 import org.example.cedc.model.enums.StoreUserRole;
 import org.example.cedc.util.ExchangeRateFetcher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -57,15 +61,27 @@ public class OrderBillService {
             throw new ServiceLayerException("User not found", HttpStatus.BAD_REQUEST);
         }
         BigDecimal originalTotal = calculateItemTotalPrice(request.getOrderItems(), user);
+        BigDecimal originalTotalNoDiscount = calculateItemTotalPriceNoDiscount(request.getOrderItems(), user);
         originalTotal = calculateHundredDiscount(originalTotal);
         BigDecimal conversionRate = BigDecimal.ONE; //Default
+
+        Order order = createOrder(request, user);
+
 
         //Fetching currency exchange rate
         if(!request.getCurrency().equalsIgnoreCase(request.getTargetCurrency())){
             conversionRate = exchangeRateFetcher.fetchPairConversionRate(request.getCurrency(), request.getTargetCurrency());
         }
 
-        return conversionRate.multiply(originalTotal);
+        BigDecimal payabaleAmount = conversionRate.multiply(originalTotal);
+        order.setTotalAmountOriginalCurrency(originalTotal);
+        order.setTotalPayableAmountTargetCurrency(payabaleAmount);
+        order.setDiscount(originalTotalNoDiscount.subtract(originalTotal));
+
+        orderRepository.save(order);
+        orderItemRepository.saveAll(getOrderItems(request.getOrderItems(), order));
+
+        return payabaleAmount;
     }
 
     private BigDecimal calculateItemTotalPrice(List<OrderItemDTO> orderItemDTOS, StoreUser user){
@@ -79,6 +95,20 @@ public class OrderBillService {
             BigDecimal price = item.getCategory().equals(ItemCategory.GROCERIES) ? item.getPrice() :
                     calculateDiscountPerItem(user, item.getPrice());
             totalPrice = totalPrice.add(price.multiply(BigDecimal.valueOf(orderItemDTO.getQuantity())));
+        }
+
+        return totalPrice;
+    }
+
+    private BigDecimal calculateItemTotalPriceNoDiscount(List<OrderItemDTO> orderItemDTOS, StoreUser user){
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for(OrderItemDTO orderItemDTO : orderItemDTOS){
+            Optional<Item> optionalItem = itemRepository.findById(Long.valueOf(orderItemDTO.getItemId()));
+            if(optionalItem.isEmpty()){
+                throw new ServiceLayerException("Item does not exist", HttpStatus.BAD_REQUEST);
+            }
+            Item item = optionalItem.get();
+            totalPrice = totalPrice.add(item.getPrice().multiply(BigDecimal.valueOf(orderItemDTO.getQuantity())));
         }
 
         return totalPrice;
@@ -107,5 +137,37 @@ public class OrderBillService {
         BigDecimal hundredDiscountAmount = new BigDecimal(5);
         BigDecimal discountedAmount = totalPrice.divide(new BigDecimal(100), 0, RoundingMode.FLOOR).multiply(hundredDiscountAmount);
         return totalPrice.subtract(discountedAmount);
+    }
+
+    private Order createOrder(OrderBillRequestDTO requestDTO, StoreUser user){
+        Order order = new Order();
+        order.setStatus(OrderStatus.PENDING);
+        order.setCreatedAt(LocalDateTime.now());
+        order.setUpdatedAt(LocalDateTime.now());
+        order.setOriginalCurrency(requestDTO.getCurrency());
+        order.setTargetCurrency(requestDTO.getTargetCurrency());
+        order.setStoreUser(user);
+
+        return orderRepository.save(order);
+    }
+
+    private List<OrderItem> getOrderItems(List<OrderItemDTO> orderItemDTOS, Order order){
+        List<OrderItem> orderItems = new ArrayList<>();
+        for(OrderItemDTO orderItemDTO : orderItemDTOS){
+            OrderItem orderItem = new OrderItem();
+            Item item = itemRepository.findById(Long.valueOf(orderItemDTO.getItemId())).orElse(null);
+            if(Objects.isNull(item)){
+                throw new ServiceLayerException("Item does not exist", HttpStatus.BAD_REQUEST);
+            }
+            orderItem.setItem(item);
+            orderItem.setOrder(order);
+            orderItem.setUpdatedAt(LocalDateTime.now());
+            orderItem.setCreatedAt(LocalDateTime.now());
+            orderItem.setQuantity(orderItemDTO.getQuantity());
+
+            orderItems.add(orderItem);
+        }
+
+        return orderItems;
     }
 }
