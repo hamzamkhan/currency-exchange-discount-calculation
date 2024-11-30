@@ -5,6 +5,8 @@ import org.example.cedc.exception.ServiceLayerException;
 import org.example.cedc.model.dto.OrderItemDTO;
 import org.example.cedc.model.dto.request.OrderBillRequestDTO;
 import org.example.cedc.model.dto.response.OrderBillResponseDTO;
+import org.example.cedc.model.enums.ItemCategory;
+import org.example.cedc.model.enums.StoreUserRole;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -58,7 +60,7 @@ class OrderBillServiceTest {
 
     @Test
     @SneakyThrows
-    public void calculateOrder_success_shoes_affiliat() {
+    void calculateOrder_success_shoes_affiliate() {
         OrderBillRequestDTO requestDTO = createOrderBillRequestDTO();
         requestDTO.getOrderItems().get(0).setItemId("15");
         requestDTO.setUserEmail("hamza2@khan.com");
@@ -82,6 +84,14 @@ class OrderBillServiceTest {
         Assertions.assertThrows(ServiceLayerException.class, () -> orderBillService.calculateOrder(requestDTO));
     }
 
+    @Test
+    @SneakyThrows
+    void calculateOrder_success_withDetails() {
+        OrderBillRequestDTO requestDTO = createOrderBillRequestWithDetails();
+        OrderBillResponseDTO responseDTO = orderBillService.calculateOrder(requestDTO);
+        Assert.assertEquals(new BigDecimal("1827.07"), responseDTO.getPayableAmount());
+    }
+
     private OrderBillRequestDTO createOrderBillRequestDTO() {
         OrderBillRequestDTO requestDTO = new OrderBillRequestDTO();
         OrderItemDTO orderItemDTO = new OrderItemDTO();
@@ -92,6 +102,25 @@ class OrderBillServiceTest {
         requestDTO.setCurrency("USD");
         requestDTO.setTargetCurrency("AED");
         requestDTO.setUserEmail("hamza@khan.com");
+
+        return requestDTO;
+    }
+
+
+    private OrderBillRequestDTO createOrderBillRequestWithDetails() {
+        OrderBillRequestDTO requestDTO = new OrderBillRequestDTO();
+        OrderItemDTO orderItemDTO = new OrderItemDTO();
+        orderItemDTO.setQuantity(2);
+        orderItemDTO.setCategory(ItemCategory.ELECTRONICS);
+        orderItemDTO.setName("Test Item");
+
+        requestDTO.setOrderItems(Collections.singletonList(orderItemDTO));
+        requestDTO.setUserEmail("hamza@khan.com");
+        requestDTO.setCurrency("USD");
+        requestDTO.setTargetCurrency("AED");
+        requestDTO.setRole(StoreUserRole.CUSTOMER);
+        requestDTO.setCustomerTenure(3);
+        requestDTO.setTotalAmount(new BigDecimal(550));
 
         return requestDTO;
     }

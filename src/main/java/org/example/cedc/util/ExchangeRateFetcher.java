@@ -1,20 +1,29 @@
 package org.example.cedc.util;
 
+import lombok.extern.slf4j.Slf4j;
+import org.example.cedc.exception.ServiceLayerException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 /**
  * @author hamza mustafa khan
  * @mailto : hamzamkhan@outlook.com
  */
 
+@Slf4j
 @Component
 public class ExchangeRateFetcher {
 
@@ -30,39 +39,37 @@ public class ExchangeRateFetcher {
         String urlString = apiUrl + "/" + apiKey + String.format(PAIR_CONVERSION, originalCurrency, targetCurrency);
         BigDecimal rate = BigDecimal.ONE;
         try{
-            URL url = new URL(urlString);
+            HttpClient client = HttpClient.newHttpClient();
 
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
+            // Build the HttpRequest
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(urlString))
+                    .GET()
+                    .build();
 
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Read the response
-                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-                reader.close();
+            // Send the request and get the response
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-                // Parse JSON response
-                JSONObject jsonResponse = new JSONObject(response.toString());
+            // Check if the response is successful
+            if (response.statusCode() == 200) {
+                // Parse the JSON response
+                JSONObject jsonResponse = new JSONObject(response.body());
                 if (jsonResponse.getString("result").equals("success")) {
                     // Extract conversion_rate
                     double conversionRate = jsonResponse.getDouble("conversion_rate");
                     rate = BigDecimal.valueOf(conversionRate);
                 } else {
-                    System.out.println("Error: " + jsonResponse.getString("result"));
+                    log.error("Error: " + jsonResponse.getString("result"));
                 }
             } else {
-                System.out.println("GET request failed. Response Code: " + responseCode);
+                log.error("GET request failed. Response Code: " + response.statusCode());
             }
 
-        } catch (Exception e){
-            e.printStackTrace();
+        } catch (InterruptedException ie) { // InterruptedException is caught here
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
         }
-
 
         return rate;
     }

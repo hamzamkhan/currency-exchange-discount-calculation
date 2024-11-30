@@ -1,7 +1,6 @@
 package org.example.cedc.configuration;
 
 import org.example.cedc.interceptor.APIInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -15,8 +14,12 @@ import static org.example.cedc.configuration.SecurityConfig.WHITELISTED_APIS;
 
 @Configuration
 public class Config implements WebMvcConfigurer {
-    @Autowired
-    private APIInterceptor interceptor;
+
+    private final APIInterceptor interceptor;
+
+    public Config(APIInterceptor interceptor) {
+        this.interceptor = interceptor;
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

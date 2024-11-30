@@ -29,13 +29,11 @@ This project deals with discount calculation and currency conversion (if applica
     - A user has been included at the start of initialization of the project with credentials mentioned above
     - An `interceptor` is also implemented used for authenticating user via `Basic Auth`
     - API used for creating a user has been whitelisted: `/api/user/create`
+
     
-
-
-
 - **Project Working Description**
-
-    - After the project starts and the database has been initialized with data, bill calculation request can be made with the following CURL:
+    - API requests constraints are present in the next section
+    - After the project starts and the database has been initialized with data, bill calculation request can be made either with the following CURL:
         `curl --location 'localhost:7788/api/calculate' \
       --header 'Content-Type: application/json' \
       --header 'Authorization: Basic aGFtemFAa2hhbi5jb206ZWN4dmF3QSRUdQ==' \
@@ -50,6 +48,23 @@ This project deals with discount calculation and currency conversion (if applica
       }
       ],
       "userEmail":"hamza2@khan.com"
+      }'` ---- OR --- `curl --location 'localhost:7788/api/calculate' \
+      --header 'Content-Type: application/json' \
+      --header 'Authorization: Basic aGFtemFAa2hhbi5jb206ZWN4dmF3QSRUdQ==' \
+      --data-raw '{
+      "currency":"USD",
+      "targetCurrency":"AED",
+      "orderItems":[
+      {
+      "quantity":2,
+      "category":"GROCERIES",
+      "name":"Test Item"
+      }
+      ],
+      "userEmail":"hamza@khan.com",
+      "role":"CUSTOMER",
+      "customerTenure":1,
+      "totalAmount":550
       }'`
     - There are 15 items pre-loaded in the db with their respective categories, itemId in the request be changed, 1-15. 
     - There are 3-4 users pre-loaded with different roles so that the discount is applied differently
@@ -58,6 +73,11 @@ This project deals with discount calculation and currency conversion (if applica
       `test.hamzamk@gmail.com` with credentials being set in `application.properties`
     - After the approval, only then the password can be reset
 
+
+- **API Request Constraints**
+    - There are following constraints for the request to be made for `/api/calculate`:
+    - If `totalAmount` is not present in the request, then items in the list should have ids present in db so that the total amount is calculated based on their respective prices
+    - `customerTenure` and `role` should be provided together, if not then `userEmail` should be present (ones from the db)
 
 
 - **APIs Description**

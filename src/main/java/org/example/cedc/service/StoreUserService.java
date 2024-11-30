@@ -4,7 +4,6 @@ import org.example.cedc.data.StoreUserRepository;
 import org.example.cedc.exception.ServiceLayerException;
 import org.example.cedc.model.dto.request.StoreUserRequestDTO;
 import org.example.cedc.model.entity.StoreUser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,10 +20,14 @@ import java.util.Objects;
 @Service
 public class StoreUserService {
     public static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$!";
-    @Autowired
-    private StoreUserRepository storeUserRepository;
+
+    private final StoreUserRepository storeUserRepository;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    public StoreUserService(StoreUserRepository storeUserRepository) {
+        this.storeUserRepository = storeUserRepository;
+    }
 
     public StoreUser createUser(StoreUserRequestDTO storeUserRequestDTO) {
         StoreUser existingUser = storeUserRepository.findByEmail(storeUserRequestDTO.getEmail());

@@ -11,3 +11,4 @@ lib
 *.ipr
 *.iws
 out/
+sonarqube/.DS_Store

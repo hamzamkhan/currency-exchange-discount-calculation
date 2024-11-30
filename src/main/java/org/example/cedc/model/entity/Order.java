@@ -7,15 +7,14 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.cedc.model.enums.OrderStatus;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,16 +42,13 @@ public class Order extends BaseEntity {
     @Column(name = "org_curr_amount")
     private BigDecimal totalAmountOriginalCurrency;
 
-    @Column
-    private BigDecimal discount; // Discount in percentage or fixed amount
-
     @Column(name = "target_payable_amount")
     private BigDecimal totalPayableAmountTargetCurrency;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "order")
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private StoreUser storeUser;
 }

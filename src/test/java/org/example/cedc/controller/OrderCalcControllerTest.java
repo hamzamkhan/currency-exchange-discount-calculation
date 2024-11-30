@@ -32,19 +32,48 @@ class OrderCalcControllerTest {
     void calculateOrder_success() {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/calculate")
                         .with(httpBasic("hamza@khan.com", "ecxvawA$Tu"))
-                .content("{\n" +
-                        "    \"currency\":\"USD\",\n" +
-                        "    \"targetCurrency\":\"AED\",\n" +
-                        "    \"orderItems\":[\n" +
-                        "        {\n" +
-                        "            \"itemId\":15,\n" +
-                        "            \"quantity\":2\n" +
-                        "        }\n" +
-                        "    ],\n" +
-                        "    \"userEmail\":\"hamza@khan.com\"\n" +
-                        "}")
+                .content("""
+                            {
+                                "currency": "USD",
+                                "targetCurrency": "AED",
+                                "orderItems": [
+                                    {
+                                        "itemId": 15,
+                                        "quantity": 2
+                                    }
+                                ],
+                                "userEmail": "hamza@khan.com"
+                            }
+                           """)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.payableAmount").value("532.52"));
+    }
+
+    @Test
+    @SneakyThrows
+    void calculateOrder_withDetailsFromRequestBody() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/calculate")
+                        .with(httpBasic("hamza@khan.com", "ecxvawA$Tu"))
+                        .content("""
+                                    {
+                                        "currency": "USD",
+                                        "targetCurrency": "AED",
+                                        "orderItems": [
+                                            {
+                                                "quantity": 2,
+                                                "category": "GROCERIES",
+                                                "name": "Test Item"
+                                            }
+                                        ],
+                                        "userEmail": "hamza@khan.com",
+                                        "role": "CUSTOMER",
+                                        "customerTenure": 1,
+                                        "totalAmount": 550
+                                    }
+                                    """)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.payableAmount").value("1928.07"));
     }
 }

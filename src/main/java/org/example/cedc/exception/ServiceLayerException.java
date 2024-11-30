@@ -2,7 +2,6 @@ package org.example.cedc.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
@@ -13,12 +12,11 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class ServiceLayerException extends RuntimeException{
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-    private HttpStatus httpStatus;
+    private final HttpStatus httpStatus;
 
     public ServiceLayerException(String message, HttpStatus httpStatus) {
         super(message);

@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.cedc.data.StoreUserRepository;
 import org.example.cedc.model.entity.StoreUser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -19,8 +18,11 @@ import java.util.Base64;
 
 @Component
 public class APIInterceptor implements HandlerInterceptor {
-    @Autowired
-    private StoreUserRepository storeUserRepository;
+    private final StoreUserRepository storeUserRepository;
+
+    public APIInterceptor(StoreUserRepository storeUserRepository) {
+        this.storeUserRepository = storeUserRepository;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

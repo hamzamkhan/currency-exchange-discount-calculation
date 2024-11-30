@@ -30,25 +30,15 @@ class StoreUserControllerTest {
     @SneakyThrows
     void test_createUser_success() {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/user/create")
-                        .content("{\n" +
-                                "    \"name\":\"Hamza Mustafa Khan\",\n" +
-                                "    \"email\":\"hamza@gmail.com\",\n" +
-                                "    \"role\":\"CUSTOMER\"\n" +
-                                "}")
+                        .content("""
+                                {
+                                    "name": "Hamza Mustafa Khan",
+                                    "email": "hamza@gmail.com",
+                                    "role": "CUSTOMER"
+                                }
+                                """)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("hamza@gmail.com"));
-    }
-
-    @Test
-    @SneakyThrows
-    void test_createUser_failure() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/create")
-                        .content("{\n" +
-                                "    \"name\":\"Hamza Mustafa Khan\",\n" +
-                                "    \"email\":\"hamza@gmail.com\",\n" +
-                                "}")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 }

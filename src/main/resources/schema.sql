@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS tbl_order (
     original_currency VARCHAR(3) NOT NULL,
     target_currency VARCHAR(3) NOT NULL,
     org_curr_amount DECIMAL(7, 2) NULL,
-    discount DECIMAL(7, 2) NULL,
     target_payable_amount DECIMAL(7, 2) NULL,
     user_id BIGINT NOT NULL,
     create_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

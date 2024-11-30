@@ -4,7 +4,6 @@ import org.example.cedc.model.dto.request.StoreUserRequestDTO;
 import org.example.cedc.model.dto.response.StoreUserResponseDTO;
 import org.example.cedc.model.entity.StoreUser;
 import org.example.cedc.service.StoreUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/user")
 public class StoreUserController {
-    @Autowired
-    private StoreUserService storeUserService;
+    private final StoreUserService storeUserService;
+
+    public StoreUserController(StoreUserService storeUserService) {
+        this.storeUserService = storeUserService;
+    }
 
     @PostMapping("/create")
     public ResponseEntity<StoreUserResponseDTO> createUser(@RequestBody StoreUserRequestDTO storeUserRequestDTO) {
