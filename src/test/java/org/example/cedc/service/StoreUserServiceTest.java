@@ -1,14 +1,13 @@
-package org.example.cedc;
+package org.example.cedc.service;
 
 import lombok.SneakyThrows;
 import org.example.cedc.exception.ServiceLayerException;
 import org.example.cedc.model.dto.request.StoreUserRequestDTO;
 import org.example.cedc.model.entity.StoreUser;
 import org.example.cedc.model.enums.StoreUserRole;
-import org.example.cedc.service.StoreUserService;
 import org.junit.Assert;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,13 +22,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
-public class StoreUserServiceTest {
+class StoreUserServiceTest {
     @Autowired
     private StoreUserService storeUserService;
 
     @Test
     @SneakyThrows
-    public void createUser_success() {
+    void createUser_success() {
         StoreUserRequestDTO requestDTO = createDTO();
         StoreUser storeUser = storeUserService.createUser(requestDTO);
         Assert.assertEquals("Test User", storeUser.getUsername());
@@ -37,7 +36,7 @@ public class StoreUserServiceTest {
 
     @Test
     @SneakyThrows
-    public void createUser_failure() {
+    void createUser_failure() {
         StoreUserRequestDTO requestDTO = createDTO();
         requestDTO.setEmail("hamza@khan.com");
         Assertions.assertThrows(ServiceLayerException.class, () -> storeUserService.createUser(requestDTO));

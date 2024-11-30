@@ -1,14 +1,13 @@
-package org.example.cedc;
+package org.example.cedc.service;
 
 import lombok.SneakyThrows;
 import org.example.cedc.exception.ServiceLayerException;
 import org.example.cedc.model.dto.OrderItemDTO;
 import org.example.cedc.model.dto.request.OrderBillRequestDTO;
 import org.example.cedc.model.dto.response.OrderBillResponseDTO;
-import org.example.cedc.service.OrderBillService;
 import org.junit.Assert;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,13 +25,13 @@ import java.util.Collections;
 @SpringBootTest
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
-public class OrderBillServiceTest {
+class OrderBillServiceTest {
     @Autowired
     private OrderBillService orderBillService;
 
     @Test
     @SneakyThrows
-    public void calculateOrder_success_groceries() {
+    void calculateOrder_success_groceries() {
         OrderBillRequestDTO requestDTO = createOrderBillRequestDTO();
         OrderBillResponseDTO responseDTO = orderBillService.calculateOrder(requestDTO);
         Assert.assertEquals(new BigDecimal("8.82"), responseDTO.getPayableAmount());
@@ -40,7 +39,16 @@ public class OrderBillServiceTest {
 
     @Test
     @SneakyThrows
-    public void calculateOrder_success_shoes() {
+    void calculateOrder_success_shoes_different_customer() {
+        OrderBillRequestDTO requestDTO = createOrderBillRequestDTO();
+        requestDTO.getOrderItems().get(0).setItemId("15");
+        OrderBillResponseDTO responseDTO = orderBillService.calculateOrder(requestDTO);
+        Assert.assertEquals(new BigDecimal("532.52"), responseDTO.getPayableAmount());
+    }
+
+    @Test
+    @SneakyThrows
+    void calculateOrder_success_shoes() {
         OrderBillRequestDTO requestDTO = createOrderBillRequestDTO();
         requestDTO.getOrderItems().get(0).setItemId("15");
         requestDTO.setUserEmail("hamza1@khan.com");
@@ -60,7 +68,7 @@ public class OrderBillServiceTest {
 
     @Test
     @SneakyThrows
-    public void calculateOrder_failure_item() {
+    void calculateOrder_failure_item() {
         OrderBillRequestDTO requestDTO = createOrderBillRequestDTO();
         requestDTO.getOrderItems().get(0).setItemId("55");
         Assertions.assertThrows(ServiceLayerException.class, () -> orderBillService.calculateOrder(requestDTO));
@@ -68,7 +76,7 @@ public class OrderBillServiceTest {
 
     @Test
     @SneakyThrows
-    public void calculateOrder_failure_user() {
+    void calculateOrder_failure_user() {
         OrderBillRequestDTO requestDTO = createOrderBillRequestDTO();
         requestDTO.setUserEmail("test@gmail.com");
         Assertions.assertThrows(ServiceLayerException.class, () -> orderBillService.calculateOrder(requestDTO));
