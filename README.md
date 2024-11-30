@@ -73,4 +73,16 @@ This project deals with discount calculation and currency conversion (if applica
          - `InterceptorTest.java`
          - `OrderBillServiceTest.java`
          - `StoreUserServiceTest.java`
+    - For test coverage, jacoco
+    - Implementation is done on the basis of single environment/profile.
+
+- **Test details**
+    - Following test classes have been implemented:
+        - `InterceptorTest.java`
+        - `OrderBillServiceTest.java`
+        - `StoreUserServiceTest.java`
+        - `OrderCalcControllerTest.java`
+        - `StoreUserControllerTest.java`
+    - For test coverage, jacoco plugin has been installed
+    - To generate the coverage report, run command `mvn clean test`, then go to `target -> site` folder, open the `index.html` in your desired browser which will show the report
     - Implementation is done on the basis of single environment/profile.
