@@ -78,6 +78,7 @@ This project deals with discount calculation and currency conversion (if applica
     - There are following constraints for the request to be made for `/api/calculate`:
     - If `totalAmount` is not present in the request, then items in the list should have ids present in db so that the total amount is calculated based on their respective prices
     - `customerTenure` and `role` should be provided together, if not then `userEmail` should be present (ones from the db)
+    - Given item category in request, if any of the item category is of `GROCERIES`, no percentage discount will be calculated
 
 
 - **APIs Description**
