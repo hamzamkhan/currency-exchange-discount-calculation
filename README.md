@@ -68,10 +68,6 @@ This project deals with discount calculation and currency conversion (if applica
       }'`
     - There are 15 items pre-loaded in the db with their respective categories, itemId in the request be changed, 1-15. 
     - There are 3-4 users pre-loaded with different roles so that the discount is applied differently
-    - For resetting the password, an API will be called with the email of the user. The user will receive an request
-      approval mail with the link in it which approves the password reset request. This mail is sent from an account
-      `test.hamzamk@gmail.com` with credentials being set in `application.properties`
-    - After the approval, only then the password can be reset
 
 
 - **API Request Constraints**
